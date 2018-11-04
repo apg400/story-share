@@ -1,0 +1,49 @@
+<!doctype html >
+
+<title>{% block title %}{% endblock %} - Story Share</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav>
+	<h1><a href="{{ url_for('feed.index') }}">Story Share</a></h1>
+	<input type="text" placeholder="Search..." id="search-input" onekeyup="search()">
+	{% if g.user %}
+		<div class="dropdown">
+			<button class="dropbutton" onclick="openUserMenu()">{{ g.user['username'] }}</button>
+			<div class="dropdown-content" id="userdropdown">
+				<a href="{{ url_for('user.stories', username=g.user['username']) }}">My Stories</a>
+				<a href="{{ url_for('user.stories', username=g.user['username']) }}">Account</a>
+				<a href="{{ url_for('auth.logout') }}">Log Out</a>
+			</div>
+		</div>
+	{% else %}
+		<a href="{{ url_for('auth.login') }}">Log In</a>
+		<a href="{{ url_for('auth.register') }}">Register</a>
+	{% endif %}
+	<script type="text/javascript">
+		function search() {
+			input = document.getElementById("search-input");
+			input = input.value.toLowerCase();
+			window.alert(input);
+		}
+		function openUserMenu() {
+			document.getElementById("userdropdown").classList.toggle("show");
+		}
+
+		window.onclick = function(e) {
+			if (!e.target.matches('.dropbutton')) {
+				var dropdown = document.getElementById("userdropdown");
+				if (dropdown.classList.contains('show')) {
+					dropdown.classList.remove('show');
+				}
+			}
+		}
+	</script>
+</nav>
+<section class="content">
+	<header>
+		{% block header %}{% endblock %}
+	</header>
+	{% for message in get_flashed_messages() %}
+		<div class="flash">{{ message }}</div>
+	{% endfor %}
+	{% block content %}{% endblock %}
+</section>
